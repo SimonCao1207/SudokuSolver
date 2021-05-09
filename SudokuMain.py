@@ -35,7 +35,7 @@ if biggest.size != 0:
     imgtest = boxes[0].copy()
     directory = r'C:\Users\PC\PycharmProjects\SudokuSolver'
     os.chdir(directory)
-    cv2.imwrite("number3.png", imgtest)
+    cv2.imwrite("SudokuImage/number3.png", imgtest)
     print(imgtest.shape)
 
 cv2.imshow('Sudoku Board', imgThreshold)
