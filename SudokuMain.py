@@ -6,7 +6,6 @@ PATH = 'model.pth'
 pathImage = "SudokuImage/sudoku_img2.png"
 heightImage = 450
 widthImage = 450
-model = clf
 
 # Prepare image
 img = cv2.imread(pathImage)
@@ -32,11 +31,13 @@ if biggest.size != 0:
 
     # SPLIT the image into boxes of number
     boxes = split_boxes(imgWarpColored)
-    imgtest = boxes[0].copy()
-    directory = r'C:\Users\PC\PycharmProjects\SudokuSolver'
-    os.chdir(directory)
-    cv2.imwrite("SudokuImage/number3.png", imgtest)
-    print(imgtest.shape)
+    # imgtest = boxes[3].copy()
+    # directory = r'C:\Users\PC\PycharmProjects\SudokuSolver'
+    # os.chdir(directory)
+    # cv2.imwrite("SudokuImage/number7.png", imgtest)
+    # print(imgtest.shape)
+    numbers = predict(boxes)
+    print(numbers)
 
-cv2.imshow('Sudoku Board', imgThreshold)
+# cv2.imshow('Sudoku Board', imgtest)
 cv2.waitKey(0)
