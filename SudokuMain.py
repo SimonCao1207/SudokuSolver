@@ -1,9 +1,10 @@
 from utils import *
 from digit_classifier import *
+from sudokuSolver import *
 import os
 
 PATH = 'model.pth'
-pathImage = "SudokuImage/sudoku_img2.png"
+pathImage = "SudokuImage/sudoku_img1.png"
 heightImage = 450
 widthImage = 450
 
@@ -31,13 +32,19 @@ if biggest.size != 0:
 
     # SPLIT the image into boxes of number
     boxes = split_boxes(imgWarpColored)
-    # imgtest = boxes[3].copy()
-    # directory = r'C:\Users\PC\PycharmProjects\SudokuSolver'
-    # os.chdir(directory)
-    # cv2.imwrite("SudokuImage/number7.png", imgtest)
-    # print(imgtest.shape)
-    numbers = predict(boxes)
-    print(numbers)
 
-# cv2.imshow('Sudoku Board', imgtest)
+    numbers = predict(boxes)
+
+grid = []
+for i in range(9):
+    grid.append(numbers[i:i+9])
+
+# print(grid)
+print(solve_sudoku(grid))
+
+# imgtest = boxes[26].copy()
+# imgtest = prepare(imgtest)
+# cv2.imshow("number", imgtest)
+# print(numbers[26])
+
 cv2.waitKey(0)
