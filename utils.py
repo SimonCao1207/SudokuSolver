@@ -1,7 +1,9 @@
+from digit_classifier import *
 import cv2
 import numpy as np
-import torch
-from torchvision import models
+from PIL import Image
+from scipy import ndimage
+import os
 
 # preprocessing image
 def preProcess(img):
@@ -46,24 +48,51 @@ def split_boxes(img):
             boxes.append(col)
     return boxes
 
-# Digit Recognition model
-# def getPrediction(boxes, model):
-#     result = []
-#     for image in boxes:
-#         ## PREPARE IMAGE
-#         img = np.asarray(image)
-#         img = img[4:img.shape[0] - 4, 4:img.shape[1] - 4]
-#         img = cv2.resize(img, (28, 28))
-#         img = img / 255
-#         img = img.reshape(1, 28, 28, 1)
-#         ## GET PREDICTION
-#         predictions = model(img)
-#         classIndex = model.predict_classes(img)
-#         probabilityValue = np.amax(predictions)
-#         ## SAVE TO RESULT
-#         if probabilityValue > 0.8:
-#             result.append(classIndex[0])
-#         else:
-#             result.append(0)
-#     return result
+def prepare(img):
+    img = cv2.bitwise_not(img)
+    h, w = 30, 30
+    y, x = 10, 10
+
+    crop_img = img[y:y + h, x:x + w]
+    resized = cv2.resize(crop_img, (28, 28), interpolation=cv2.INTER_AREA)
+
+    return resized
+
+def predict(boxes):
+    predictions = []
+    i = 1
+    path = r"C:\Users\PC\PycharmProjects\SudokuSolver\SudokuImage"
+    for box in boxes:
+        # Save and read the image
+        img = box.copy()
+        name = 'img_' + str(i) + ".jpg"
+        cv2.imwrite(os.path.join(path, name), img)
+        img = cv2.imread(os.path.join(path, name))
+        i += 1
+
+        img = prepare(img)
+        copy_img = img.copy()
+
+        # Denoise the image
+        denoised_square = ndimage.median_filter(copy_img, 3)
+        white_pix_count = np.count_nonzero(denoised_square)
+
+        # Detech empty box
+        if white_pix_count > 100:
+            empty_square = False
+        else:
+            empty_square = True
+        if empty_square:
+            predictions.append(-1)
+            continue
+
+        grayImage = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        (thresh, blackAndWhiteImage) = cv2.threshold(grayImage, 127, 255, cv2.THRESH_BINARY)
+        im_pil = Image.fromarray(blackAndWhiteImage)
+        imtest = transforms.ToTensor()(im_pil).unsqueeze_(0)
+        num = thresholding(model(imtest))
+        predictions.append(num.detach().numpy()[0])
+
+    return predictions
+
 

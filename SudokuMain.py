@@ -1,7 +1,5 @@
 from utils import *
-from digit_classifier import *
 from sudokuSolver import *
-import os
 
 PATH = 'model.pth'
 pathImage = "SudokuImage/sudoku_img1.png"
@@ -29,10 +27,8 @@ if biggest.size != 0:
     matrix = cv2.getPerspectiveTransform(pts1, pts2) # Transformation matrix
     imgWarpColored = cv2.warpPerspective(img, matrix, (widthImage, heightImage))
     imgWarpColored = cv2.cvtColor(imgWarpColored, cv2.COLOR_RGB2GRAY)
-
     # SPLIT the image into boxes of number
     boxes = split_boxes(imgWarpColored)
-
     numbers = predict(boxes)
 
 grid = []
@@ -41,10 +37,5 @@ for i in range(9):
 
 # print(grid)
 print(solve_sudoku(grid))
-
-# imgtest = boxes[26].copy()
-# imgtest = prepare(imgtest)
-# cv2.imshow("number", imgtest)
-# print(numbers[26])
-
-cv2.waitKey(0)
+for c in grid:
+    print(c)
