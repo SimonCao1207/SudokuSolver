@@ -3,3 +3,4 @@ test
 img/*.jpg
 img/*.png
 __pycache__
+eda.ipynb
