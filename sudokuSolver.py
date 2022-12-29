@@ -1,6 +1,8 @@
 
 def find_next_empty(puzzle):
-    # return row, col tuple or (None, None) if there is None
+    """
+    return tuple (row, col) if there is an empty cell, otherwise (None, None) 
+    """
     for r in range(9):
         for c in range(9):
             if puzzle[r][c] == -1:
@@ -8,6 +10,9 @@ def find_next_empty(puzzle):
     return None, None
 
 def is_valid(puzzle, guess, row, col):
+    """
+    return True if the guess is valid, otherwise False
+    """
     row_vals = puzzle[row]
     if guess in row_vals:
         return False
@@ -24,13 +29,13 @@ def is_valid(puzzle, guess, row, col):
 
 
 def solve_sudoku(puzzle):
-    # Choose somewhere on the puzzle to make a guess
+    """
+    input: 2-D array of sudoku puzzle board with -1 being an empty cell.
+    return: True if the puzzle is solvable, otherwise False
+    """
     row, col = find_next_empty(puzzle)
-
     if row is None:
         return True
-
-    # make a guess
     for guess in range(1,10):
         if is_valid(puzzle, guess, row, col):
             puzzle[row][col] = guess
@@ -38,20 +43,20 @@ def solve_sudoku(puzzle):
                 return True
         puzzle[row][col] = -1
     return False
+
 if __name__ == '__main__':
     example_board = [
         [3, 9, -1, -1, 5, -1, -1, -1, -1],
         [-1, -1, -1, 2, -1, -1, -1, -1, 5],
         [-1, -1, -1, 7, 1, 9, -1, 8, -1],
-
         [-1, 5, -1, -1, 6, 8, -1, -1, -1],
         [2, -1, 6, -1, -1, 3, -1, -1, -1],
         [-1, -1, -1, -1, -1, -1, -1, -1, 4],
-
         [5, -1, -1, -1, -1, -1, -1, -1, -1],
         [6, 7, -1, 1, -1, 5, -1, 4, -1],
         [1, -1, 9, -1, -1, -1, 2, -1, -1]
     ]
-    print(solve_sudoku(example_board))
-    for c in example_board:
-        print(c)
+    if solve_sudoku(example_board):
+        for c in example_board:
+            print(c)
+    else: print("This puzzle is not solvable")

@@ -1,2 +1,5 @@
 test
 .idea
+img/*.jpg
+img/*.png
+__pycache__

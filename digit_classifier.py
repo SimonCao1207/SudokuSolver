@@ -3,12 +3,9 @@ import torch.nn as nn
 import torchvision
 import torchvision.transforms as transforms
 
-
 batch_size = 512
 
-
 class CNN_classifier(nn.Module):
-    # initialization
     def __init__(self):
         super(CNN_classifier, self).__init__()
         self.conv1 = nn.Conv2d(1, 32, kernel_size=5)
@@ -19,7 +16,6 @@ class CNN_classifier(nn.Module):
         self.maxpool = nn.MaxPool2d(2)
         self.relu = nn.ReLU()
 
-    # forward path
     def forward(self, x):
         x = self.conv1(x)
         x = self.relu(x)
@@ -32,8 +28,6 @@ class CNN_classifier(nn.Module):
         x = self.maxpool(x)
         x = x.relu()
 
-        # print(x.shape)
-
         x = x.view(-1, 64 * 3 * 3)
         x = self.fc1(x)
         x = self.relu(x)
@@ -42,11 +36,9 @@ class CNN_classifier(nn.Module):
         return x
 
 def thresholding(prediction):
-    # Find label which shows highest prediction value
     _, pred_label = torch.max(prediction, 1)
     return pred_label
 
-# Load the model
 model = CNN_classifier()
 PATH = "cnn_model.pth"
 device = torch.device('cpu')

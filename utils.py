@@ -5,15 +5,24 @@ from PIL import Image
 from scipy import ndimage
 import os
 
-# preprocessing image
+def display(img, name='board'): 
+    cv2.imshow(name, img)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
 def preProcess(img):
+    """
+    Preprocessing the image
+    """
     imgGray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
     imgBlur = cv2.GaussianBlur(imgGray, (5,5), 1)
     imgThreshold = cv2.adaptiveThreshold(imgBlur, 255, 1, 1, 11, 2)
     return imgThreshold
 
-# find corners in a Sudoku board
 def biggestContour(contours):
+    """ 
+    Find corners in a Sudoku board
+    """
     biggest =  np.array([])
     max_area = 0
     for contour in contours:
@@ -26,8 +35,10 @@ def biggestContour(contours):
                 biggest = approx
     return biggest, max_area
 
-# reorder points for warp perspective
 def reorder(myPoints):
+    """
+    Reorder points for warp perspective
+    """
     myPoints = myPoints.reshape((4, 2))
     newPoints = np.zeros((4,1,2), dtype=np.int32)
     add = myPoints.sum(1)
@@ -38,8 +49,10 @@ def reorder(myPoints):
     newPoints[2] = myPoints[np.argmax(diff)]
     return newPoints
 
-# Split the image into boxes
 def split_boxes(img):
+    """
+    Split the image into boxes
+    """
     rows = np.vsplit(img, 9)
     boxes = []
     for row in rows:
@@ -61,8 +74,9 @@ def prepare(img):
 def predict(boxes):
     predictions = []
     i = 1
-    path = r"C:\Users\PC\PycharmProjects\SudokuSolver\SudokuImage"
+    path = "./img"
     for box in boxes:
+        
         # Save and read the image
         img = box.copy()
         name = 'img_' + str(i) + ".jpg"
@@ -77,7 +91,7 @@ def predict(boxes):
         denoised_square = ndimage.median_filter(copy_img, 3)
         white_pix_count = np.count_nonzero(denoised_square)
 
-        # Detech empty box
+        # Detach empty box
         if white_pix_count > 100:
             empty_square = False
         else:
