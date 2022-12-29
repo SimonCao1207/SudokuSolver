@@ -5,7 +5,7 @@ def find_next_empty(puzzle):
     """
     for r in range(9):
         for c in range(9):
-            if puzzle[r][c] == -1:
+            if puzzle[r][c] == 0:
                 return r,c
     return None, None
 
@@ -30,7 +30,7 @@ def is_valid(puzzle, guess, row, col):
 
 def solve_sudoku(puzzle):
     """
-    input: 2-D array of sudoku puzzle board with -1 being an empty cell.
+    input: 2-D array of sudoku puzzle board with 0 being an empty cell.
     return: True if the puzzle is solvable, otherwise False
     """
     row, col = find_next_empty(puzzle)
@@ -41,20 +41,20 @@ def solve_sudoku(puzzle):
             puzzle[row][col] = guess
             if solve_sudoku(puzzle):
                 return True
-        puzzle[row][col] = -1
+        puzzle[row][col] = 0
     return False
 
 if __name__ == '__main__':
     example_board = [
-        [3, 9, -1, -1, 5, -1, -1, -1, -1],
-        [-1, -1, -1, 2, -1, -1, -1, -1, 5],
-        [-1, -1, -1, 7, 1, 9, -1, 8, -1],
-        [-1, 5, -1, -1, 6, 8, -1, -1, -1],
-        [2, -1, 6, -1, -1, 3, -1, -1, -1],
-        [-1, -1, -1, -1, -1, -1, -1, -1, 4],
-        [5, -1, -1, -1, -1, -1, -1, -1, -1],
-        [6, 7, -1, 1, -1, 5, -1, 4, -1],
-        [1, -1, 9, -1, -1, -1, 2, -1, -1]
+       [0, 0, 8, 0, 0, 0, 0, 0, 0], 
+       [4, 9, 0, 1, 5, 7, 0, 0, 2], 
+       [0, 0, 3, 0, 0, 4, 1, 9, 0],
+       [1, 8, 5, 0, 6, 0, 0, 2, 0], 
+       [0, 0, 0, 0, 2, 0, 0, 6, 0], 
+       [9, 6, 0, 4, 0, 0, 3, 0, 0], 
+       [0, 0, 0, 0, 7, 2, 0, 0, 4], 
+       [0, 4, 9, 0, 3, 0, 0, 5, 7], 
+       [8, 2, 7, 0, 0, 9, 0, 1, 3]
     ]
     if solve_sudoku(example_board):
         for c in example_board:
