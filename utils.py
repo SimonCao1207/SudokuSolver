@@ -1,9 +1,12 @@
-from digit_classifier import *
+from digit_classifier import load_model, get_pred
+import torchvision.transforms as transforms
 import cv2
 import numpy as np
 from PIL import Image
 from scipy import ndimage
 import os
+from tqdm import tqdm
+
 
 def display(img, name='board'): 
     cv2.imshow(name, img)
@@ -61,52 +64,39 @@ def split_boxes(img):
             boxes.append(col)
     return boxes
 
-def prepare(img):
+def resize(img):
     img = cv2.bitwise_not(img)
-    h, w = 30, 30
-    y, x = 10, 10
-
-    crop_img = img[y:y + h, x:x + w]
-    resized = cv2.resize(crop_img, (28, 28), interpolation=cv2.INTER_AREA)
-
+    resized = cv2.resize(img, (28, 28), interpolation=cv2.INTER_AREA)
     return resized
 
-def predict(boxes):
-    predictions = []
-    i = 1
-    path = "./img"
-    for box in boxes:
+def preprocess(img):
+    # img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    img = cv2.bitwise_not(img)
+    _, img = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY)
+    transform=transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize((0.1307,), (0.3081,)),
+        transforms.Resize(28)
+    ])
+    img = transform(img)
+    return img
+
+def print_grid(grid):
+    for r in grid:
+        print(r)
         
-        # Save and read the image
-        img = box.copy()
-        name = 'img_' + str(i) + ".jpg"
-        cv2.imwrite(os.path.join(path, name), img)
-        img = cv2.imread(os.path.join(path, name))
-        i += 1
+def getImage(path, num, box):
+    cv2.imwrite(os.path.join(path, f"{num}.png"), box)
 
-        img = prepare(img)
-        copy_img = img.copy()
+def crop(img, c):
+    h, w = img.shape
+    return img[c:h-c, c:w-c]
 
-        # Denoise the image
-        denoised_square = ndimage.median_filter(copy_img, 3)
-        white_pix_count = np.count_nonzero(denoised_square)
-
-        # Detach empty box
-        if white_pix_count > 100:
-            empty_square = False
-        else:
-            empty_square = True
-        if empty_square:
-            predictions.append(-1)
-            continue
-
-        grayImage = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        (thresh, blackAndWhiteImage) = cv2.threshold(grayImage, 127, 255, cv2.THRESH_BINARY)
-        im_pil = Image.fromarray(blackAndWhiteImage)
-        imtest = transforms.ToTensor()(im_pil).unsqueeze_(0)
-        num = thresholding(model(imtest))
-        predictions.append(num.detach().numpy()[0])
-
-    return predictions
-
-
+def isWhite(img, thres=90):
+    img = crop(img, 10)
+    img = cv2.bitwise_not(img)
+    _, blackAndWhite = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY)
+    white_pix_count = np.count_nonzero(blackAndWhite)
+    if white_pix_count > thres:
+        return False
+    return True
