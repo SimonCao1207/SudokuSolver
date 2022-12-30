@@ -1,7 +1,5 @@
 test
 .idea
-img/*.jpg
-img/*.png
 __pycache__
 eda.ipynb
 .ipynb_checkpoints
