@@ -11,8 +11,8 @@ Input a Sudoku board image. It solves it and gives the result. As simple as that
 
 ### TODO: 
 
-- [] Improve digit classifier 
-- [] Front end ? 
+- [ ] Improve digit classifier 
+- [ ] Front end ? 
 
 
 
