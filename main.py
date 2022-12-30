@@ -2,9 +2,9 @@ from utils import *
 from sudokuSolver import *
 import copy
 
-pathImage = "./img/sudoku_img1.png"
+# pathImage = "./img/sudoku_img1.png"
 # pathImage = "./img/sudoku_img2.png"
-# pathImage = "./img/sudoku_img3.png"
+pathImage = "./img/sudoku_img3.png"
 h, w = 450, 450
 
 # Prepare image
@@ -38,12 +38,36 @@ if biggest.size != 0:
     #    8, 2, 7, 0, 0, 9, 0, 1, 3
     # ]
     
+    # label_2 = [
+    #    3, 4, 2, 7, 0, 0, 0, 0, 0, 
+    #    0, 0, 0, 0, 2, 4, 0, 0, 1, 
+    #    0, 9, 0, 5, 0, 0, 3, 0, 0,
+    #    0, 0, 0, 0, 0, 2, 0, 0, 6, 
+    #    4, 0, 0, 0, 0, 0, 0, 8, 2, 
+    #    0, 0, 0, 0, 0, 9, 7, 0, 0, 
+    #    0, 0, 0, 0, 7, 0, 0, 0, 0, 
+    #    0, 5, 0, 4, 0, 0, 6, 0, 0, 
+    #    0, 0, 6, 0, 0, 0, 0, 0, 0
+    # ]
+
+    # label_1 = [
+    #    0, 0, 6, 7, 0, 3, 2, 0, 0, 
+    #    0, 5, 8, 4, 0, 0, 0, 6, 0, 
+    #    4, 0, 0, 0, 9, 0, 0, 7, 1,
+    #    8, 0, 0, 0, 3, 0, 0, 5, 4, 
+    #    0, 0, 2, 9, 0, 7, 6, 0, 0, 
+    #    6, 3, 0, 0, 4, 0, 0, 0, 9, 
+    #    1, 8, 0, 0, 6, 0, 0, 0, 7, 
+    #    0, 6, 0, 0, 0, 9, 4, 8, 0, 
+    #    0, 0, 5, 8, 0, 4, 3, 0, 0
+    # ]
+
     # import os
-    # base = "./img/sudoku_label3"
+    # base = "./img/sudoku_label2"
     # for i, box in enumerate(boxes):
-    #     path = os.path.join(base, str(label_3[i]))
-    #     print(f"Getting {i} :  {path}")
-    #     getImage(path, i, box)
+    #     path = os.path.join(base, str(label_2[i]))
+    #     print(f"Writing {i} :  {path}")
+    #     get_image(path, i, box)
     # exit()
 
     clf = load_model()

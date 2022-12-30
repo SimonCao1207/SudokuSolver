@@ -25,8 +25,7 @@ def _print_final(num_pass, num_fail=0, _pass=True):
         print(f"--> {FAIL}: {colored(f'{num_fail}', 'red')} / {colored(f'{num_fail + num_pass}', 'green')} tests")
 
 
-def test_isWhite():
-    base = "./img/sudoku_label3"
+def test_isWhite(base = "./img/sudoku_label3"):
     N = len(os.listdir(base))
     cnt = 0
     for i in range(N):
@@ -52,8 +51,7 @@ def test_isWhite():
     else: 
         _print_final(cnt, 81-cnt, False)
 
-def test_clf():
-    base = "./img/sudoku_label3"
+def test_clf(base="./img/sudoku_label3"):
     clf = load_model()
     N = len(os.listdir(base))
     num_files = 81 - len(os.listdir(os.path.join(base, '0')))
@@ -78,6 +76,10 @@ def test_clf():
 if __name__ == "__main__":
     name = dct[args.t]
     if (name == 'clf'):
-        test_clf()
+        # test_clf(base="./img/sudoku_label3")
+        # test_clf(base="./img/sudoku_label2")
+        test_clf(base="./img/sudoku_label1")
     if (name == 'isWhite'):
-        test_isWhite()
+        # test_isWhite(base="./img/sudoku_label3")
+        # test_isWhite(base="./img/sudoku_label2")
+        test_isWhite(base="./img/sudoku_label1")

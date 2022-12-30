@@ -15,7 +15,7 @@ def display(img, name='board'):
 
 def thres(img):
     """
-    Preprocessing the image
+    Adaptive Thresholding
     """
     imgGray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
     imgBlur = cv2.GaussianBlur(imgGray, (5,5), 1)
@@ -87,19 +87,19 @@ def transform(img):
     # img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     img = cv2.bitwise_not(img)
     _, img = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY)
-    transform=transforms.Compose([
+    trans=transforms.Compose([
         transforms.ToTensor(),
-        transforms.Normalize((0.1307,), (0.3081,)),
-        transforms.Resize(28)
+        transforms.Resize(28),
+        transforms.Normalize((0.1307,), (0.3081,))
     ])
-    img = transform(img)
+    img = trans(img)
     return img
 
 def print_grid(grid):
     for r in grid:
         print(r)
         
-def getImage(path, num, box):
+def get_image(path, num, box):
     cv2.imwrite(os.path.join(path, f"{num}.png"), box)
 
 def crop(img, c):
@@ -122,6 +122,21 @@ def edge_detector(img):
     return edges
     
 def predict(img, clf):
+    # edges = edge_detector(img)
+    # indices = np.where(edges != 0)
+    # x1, x2 = min(indices[0]), max(indices[0])
+    # y1, y2 = min(indices[1]), max(indices[1])
+    # p1, p2, p3, p4 = [y1, x1], [y1, x2], [y2,x1], [y2, x2]
+    # e = np.array([[p1],[p3],[p2],[p4]])
+    # img_warp = warp(img, e)
+    # img_filter = ndimage.median_filter(img_warp, 3)
+    # img_gray = cv2.cvtColor(img_filter, cv2.COLOR_RGB2GRAY)
+    # img_in = crop(img_gray, 0)
+    # img = transform(img_in)
+    # out = get_pred(clf(img.unsqueeze_(0)))
+    # return out[0]
+
+    # exit()
     img_thres = thres(img)
     contours, hierarchy = cv2.findContours(img_thres, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     biggest, max_area = biggestContour(contours)
@@ -136,11 +151,11 @@ def predict(img, clf):
         img_warp = warp(img, e)
         img_filter = ndimage.median_filter(img_warp, 3)
         img_gray = cv2.cvtColor(img_filter, cv2.COLOR_RGB2GRAY)
-        img_in = crop(img_gray, 5)
+        img_in = crop(img_gray, 0)
     else:
         # Do not detect contour
         img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        img_in = crop(img_gray, 6)
+        img_in = crop(img_gray, 4)
     img = transform(img_in)
     out = get_pred(clf(img.unsqueeze_(0)))
     return out[0]
