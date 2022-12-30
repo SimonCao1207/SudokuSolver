@@ -1,3 +1,5 @@
+# https://github.com/pytorch/examples/blob/main/mnist/main.py
+
 import torch
 import torch.nn as nn
 import torchvision
