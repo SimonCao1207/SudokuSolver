@@ -83,6 +83,6 @@ if __name__ == "__main__":
         # test_clf(base="./img/sudoku_label3", clf_type='knn')
         # test_clf(base="./img/sudoku_label3", clf_type='cnn')
     if (name == 'isWhite'):
-        # test_isWhite(base="./img/sudoku_label3")
+        test_isWhite(base="./img/sudoku_label3")
         # test_isWhite(base="./img/sudoku_label2")
-        test_isWhite(base="./img/sudoku_label1")
+        # test_isWhite(base="./img/sudoku_label1")
