@@ -51,18 +51,18 @@ def test_isWhite(base = "./img/sudoku_label3"):
     else: 
         _print_final(cnt, 81-cnt, False)
 
-def test_clf(base="./img/sudoku_label3"):
-    clf = load_model()
+def test_clf(base="./img/sudoku_label3", clf_type='knn'):
     N = len(os.listdir(base))
     num_files = 81 - len(os.listdir(os.path.join(base, '0')))
     cnt = 0
+    clf = load_model()
     for i in range(1, N):
         base_path = os.path.join(base, str(i))
         dirs = os.listdir(base_path)
         for file in dirs:
             path = os.path.join(base_path, file)
             img = cv2.imread(path)
-            pred = predict(img, clf)
+            pred = predict(img, clf=clf, clf_type=clf_type)
             if (pred == i):
                 cnt += 1
                 print(PASS)
@@ -76,9 +76,12 @@ def test_clf(base="./img/sudoku_label3"):
 if __name__ == "__main__":
     name = dct[args.t]
     if (name == 'clf'):
-        # test_clf(base="./img/sudoku_label3")
-        # test_clf(base="./img/sudoku_label2")
-        test_clf(base="./img/sudoku_label1")
+        test_clf(base="./img/sudoku_label1", clf_type='knn')
+        # test_clf(base="./img/sudoku_label1", clf_type='cnn')
+        # test_clf(base="./img/sudoku_label2", clf_type='knn')
+        # test_clf(base="./img/sudoku_label2", clf_type='cnn')
+        # test_clf(base="./img/sudoku_label3", clf_type='knn')
+        # test_clf(base="./img/sudoku_label3", clf_type='cnn')
     if (name == 'isWhite'):
         # test_isWhite(base="./img/sudoku_label3")
         # test_isWhite(base="./img/sudoku_label2")

@@ -3,3 +3,5 @@ test
 __pycache__
 eda.ipynb
 .ipynb_checkpoints
+mnist_dataset
+checkpoints

@@ -70,14 +70,14 @@ if biggest.size != 0:
     #     get_image(path, i, box)
     # exit()
 
-    clf = load_model()
+    clf = load_model('cnn')
     predictions = []
     for i, box in enumerate(tqdm(boxes)):
         copy_box = copy.deepcopy(box)
         if isWhite(copy_box):
             predictions.append(0)
         else: 
-            img = transform(box)
+            img = preprocess_cnn(box)
             num = get_pred(clf(img.unsqueeze_(0)))
             predictions.append(num.detach().numpy()[0])
             grid = []
