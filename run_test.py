@@ -64,12 +64,6 @@ def test_clf(base="./img/sudoku_label3", clf_type='knn'):
             path = os.path.join(base_path, file)
             img = cv2.imread(path)
             pred = predict(img, clf=clf, clf_type=clf_type)
-            ####### 
-            # if (pred != i):
-            #     clf_cnn = load_model(clf_type='cnn')
-            #     pred = predict(img, clf_cnn, clf_type="cnn") 
-            ######
-
             if (pred == i):
                 cnt += 1
                 print(PASS)

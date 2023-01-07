@@ -2,10 +2,7 @@
 
 import torch
 import torch.nn as nn
-import torchvision
-import torchvision.transforms as transforms
 import torch.nn.functional as F
-import matplotlib.pyplot as plt
 from utils import *
 
 batch_size = 512

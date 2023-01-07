@@ -54,7 +54,7 @@ class KNN:
         self.classifier.fit(fifty_x, fifty_y)
 
         y_pred = self.classifier.predict(test_img1)
-        print("unique: ", np.unique(test_img))
+        # print("unique: ", np.unique(test_img))
         pickle.dump(self.classifier, open('./checkpoints/knn.sav', 'wb'))
         print(classification_report(test_target1, y_pred))
         print("KNN Classifier model saved as knn.sav!")

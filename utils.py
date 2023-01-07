@@ -57,6 +57,7 @@ def reorder(myPoints):
 
 def warp(img, ps):
     """"
+    ps: array of 4 points
     Warp perspective image
     """
 
@@ -104,7 +105,7 @@ def preprocess_cnn(img):
 
 def preprocees_knn(img):
     img_crop = crop(img, 4)
-    img_gray = cv2.cvtColor(img_crop, cv2.COLOR_RGB2GRAY)
+    img_gray = cv2.cvtColor(img_crop, cv2.COLOR_RGB2GRAY) if (len(img_crop.shape) > 2) else img_crop
     img_blur = cv2.GaussianBlur(img_gray, (11, 11), 0)
     img_thres = cv2.adaptiveThreshold(img_blur, 255, cv2.ADAPTIVE_THRESH_MEAN_C | cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 5, 2)
     # img_thres = zero_pad(img_thres, 5)
@@ -154,35 +155,8 @@ def edge_detector(img):
     edges = cv2.Canny(image=img_blur, threshold1=100, threshold2=200) 
     return edges
     
-def predict(img, clf, clf_type='knn'):
-    # img_thres = thres(img)
-
-    # contours, hierarchy = cv2.findContours(img_thres, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    # biggest, max_area = biggestContour(contours)
-    # if (biggest.size != 0):
-    #     # Detect contour
-    #     edges = edge_detector(img)
-    #     indices = np.where(edges != 0)
-    #     x1, x2 = min(indices[0]), max(indices[0])
-    #     y1, y2 = min(indices[1]), max(indices[1])
-    #     p1, p2, p3, p4 = [y1, x1], [y1, x2], [y2,x1], [y2, x2]
-    #     e = np.array([[p1],[p3],[p2],[p4]])
-    #     img_warp = warp(img, e)
-    #     img_in = ndimage.median_filter(img_warp, 3)
-    # else: 
-    #     img_in = img
-
-    # edges = edge_detector(img)
-    # indices = np.where(edges != 0)
-    # x1, x2 = min(indices[0]), max(indices[0])
-    # y1, y2 = min(indices[1]), max(indices[1])
-    # p1, p2, p3, p4 = [y1, x1], [y1, x2], [y2,x1], [y2, x2]
-    # e = np.array([[p1],[p3],[p2],[p4]])
-    # img_warp = warp(img, e)
-    # img_in = ndimage.median_filter(img_warp, 3)
+def predict(img_in, clf, clf_type='knn'):
     
-    img_in = img
-
     if clf_type == 'cnn':
         img_in = preprocess_cnn(img_in)
         out = get_pred(clf(img_in.unsqueeze_(0)))[0]
