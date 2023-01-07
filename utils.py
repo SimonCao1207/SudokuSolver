@@ -1,4 +1,3 @@
-from cnn import get_pred
 import torchvision.transforms as transforms
 import cv2
 import numpy as np
@@ -7,7 +6,10 @@ from scipy import ndimage
 import os
 from tqdm import tqdm
 from cnn import *
-from knn import *
+import pickle
+
+
+KNN_PATH = "./checkpoints/knn.sav"
 
 def display(img, name='board'): 
     cv2.imshow(name, img)
@@ -85,25 +87,27 @@ def resize(img):
     return resized
 
 def preprocess_cnn(img):
-    img_crop = crop(img, 5)
+    img_crop = crop(img, 8)
     if (len(img_crop.shape) > 2):
         img_gray = cv2.cvtColor(img_crop, cv2.COLOR_BGR2GRAY)
     else:
         img_gray = img_crop
-    img_invert = cv2.bitwise_not(img_gray)
-    _, img_thres = cv2.threshold(img_invert, 127, 255, cv2.THRESH_BINARY)
+    _, img_thres = cv2.threshold(img_gray, 127, 255, cv2.THRESH_BINARY)
+    # img_thres = zero_pad(img_thres, 5)
+    img_invert = cv2.bitwise_not(img_thres)
     trans=transforms.Compose([
         transforms.ToTensor(),
         transforms.Resize(28),
         transforms.Normalize((0.1307,), (0.3081,))
     ])
-    return trans(img_thres)
+    return trans(img_invert)
 
 def preprocees_knn(img):
-    img_crop = crop(img, 5)
+    img_crop = crop(img, 4)
     img_gray = cv2.cvtColor(img_crop, cv2.COLOR_RGB2GRAY)
     img_blur = cv2.GaussianBlur(img_gray, (11, 11), 0)
     img_thres = cv2.adaptiveThreshold(img_blur, 255, cv2.ADAPTIVE_THRESH_MEAN_C | cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 5, 2)
+    # img_thres = zero_pad(img_thres, 5)
     img_invert = cv2.bitwise_not(img_thres)
     kernel = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], np.uint8)
     img_process = cv2.dilate(img_invert, kernel)
@@ -127,12 +131,20 @@ def crop(img, c):
         img_crop = img[c:h-c, c:w-c]
     return img_crop
 
-def isWhite(img, thres=90):
-    img = crop(img, 10)
-    img = cv2.bitwise_not(img)
-    _, blackAndWhite = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY)
-    white_pix_count = np.count_nonzero(blackAndWhite)
-    if white_pix_count > thres:
+def whiten_edge(img, c):
+    if (len(img.shape) > 2):
+        h, w, _ = img.shape
+    else: h, w = img.shape
+    img_white = np.ones_like(img)*255
+    img_white[c:h-c, c:w-c] = img[c:h-c, c:w-c]
+    return img_white
+
+def isWhite(img, thres=40):
+    img_process = whiten_edge(img, 10)
+    _, img_thres = cv2.threshold(img_process, 127, 255, cv2.THRESH_BINARY)
+    img_invert = cv2.bitwise_not(img_thres)
+    num_black_pix = np.count_nonzero(img_invert)
+    if num_black_pix > thres:
         return False
     return True
 
@@ -143,20 +155,33 @@ def edge_detector(img):
     return edges
     
 def predict(img, clf, clf_type='knn'):
-    img_thres = thres(img)
-    contours, hierarchy = cv2.findContours(img_thres, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    biggest, max_area = biggestContour(contours)
-    if (biggest.size != 0):
-        # Detect contour
-        edges = edge_detector(img)
-        indices = np.where(edges != 0)
-        x1, x2 = min(indices[0]), max(indices[0])
-        y1, y2 = min(indices[1]), max(indices[1])
-        p1, p2, p3, p4 = [y1, x1], [y1, x2], [y2,x1], [y2, x2]
-        e = np.array([[p1],[p3],[p2],[p4]])
-        img_warp = warp(img, e)
-        img_in = ndimage.median_filter(img_warp, 3)
-    else: img_in = img
+    # img_thres = thres(img)
+
+    # contours, hierarchy = cv2.findContours(img_thres, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    # biggest, max_area = biggestContour(contours)
+    # if (biggest.size != 0):
+    #     # Detect contour
+    #     edges = edge_detector(img)
+    #     indices = np.where(edges != 0)
+    #     x1, x2 = min(indices[0]), max(indices[0])
+    #     y1, y2 = min(indices[1]), max(indices[1])
+    #     p1, p2, p3, p4 = [y1, x1], [y1, x2], [y2,x1], [y2, x2]
+    #     e = np.array([[p1],[p3],[p2],[p4]])
+    #     img_warp = warp(img, e)
+    #     img_in = ndimage.median_filter(img_warp, 3)
+    # else: 
+    #     img_in = img
+
+    # edges = edge_detector(img)
+    # indices = np.where(edges != 0)
+    # x1, x2 = min(indices[0]), max(indices[0])
+    # y1, y2 = min(indices[1]), max(indices[1])
+    # p1, p2, p3, p4 = [y1, x1], [y1, x2], [y2,x1], [y2, x2]
+    # e = np.array([[p1],[p3],[p2],[p4]])
+    # img_warp = warp(img, e)
+    # img_in = ndimage.median_filter(img_warp, 3)
+    
+    img_in = img
 
     if clf_type == 'cnn':
         img_in = preprocess_cnn(img_in)

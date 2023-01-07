@@ -1,6 +1,7 @@
 import os
 import warnings
-from utils import *
+from utils import isWhite, load_model, predict
+import cv2
 from termcolor import colored
 import argparse
 
@@ -55,7 +56,7 @@ def test_clf(base="./img/sudoku_label3", clf_type='knn'):
     N = len(os.listdir(base))
     num_files = 81 - len(os.listdir(os.path.join(base, '0')))
     cnt = 0
-    clf = load_model()
+    clf = load_model(clf_type=clf_type)
     for i in range(1, N):
         base_path = os.path.join(base, str(i))
         dirs = os.listdir(base_path)
@@ -63,6 +64,12 @@ def test_clf(base="./img/sudoku_label3", clf_type='knn'):
             path = os.path.join(base_path, file)
             img = cv2.imread(path)
             pred = predict(img, clf=clf, clf_type=clf_type)
+            ####### 
+            # if (pred != i):
+            #     clf_cnn = load_model(clf_type='cnn')
+            #     pred = predict(img, clf_cnn, clf_type="cnn") 
+            ######
+
             if (pred == i):
                 cnt += 1
                 print(PASS)
@@ -83,6 +90,6 @@ if __name__ == "__main__":
         # test_clf(base="./img/sudoku_label3", clf_type='knn')
         # test_clf(base="./img/sudoku_label3", clf_type='cnn')
     if (name == 'isWhite'):
-        test_isWhite(base="./img/sudoku_label3")
+        # test_isWhite(base="./img/sudoku_label3")
         # test_isWhite(base="./img/sudoku_label2")
-        # test_isWhite(base="./img/sudoku_label1")
+        test_isWhite(base="./img/sudoku_label1")

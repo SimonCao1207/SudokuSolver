@@ -5,6 +5,10 @@ from sklearn import datasets
 from sklearn.metrics import classification_report
 from sklearn.neighbors import KNeighborsClassifier
 import pickle
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument('--k', default='3')
+args = parser.parse_args()
 
 SEED = 1208
 np.random.seed(seed=SEED)
@@ -13,7 +17,7 @@ KNN_PATH = "./checkpoints/knn.sav"
 
 
 class KNN:
-    def __init__(self, k=3):
+    def __init__(self, k=int(args.k)):
         self.mnist = datasets.fetch_openml('mnist_784', data_home='mnist_dataset/')
         self.data, self.target = self.mnist.data, self.mnist.target
         self.indx = np.random.choice(len(self.target), 70000, replace=False)
@@ -50,10 +54,11 @@ class KNN:
         self.classifier.fit(fifty_x, fifty_y)
 
         y_pred = self.classifier.predict(test_img1)
+        print("unique: ", np.unique(test_img))
         pickle.dump(self.classifier, open('./checkpoints/knn.sav', 'wb'))
         print(classification_report(test_target1, y_pred))
         print("KNN Classifier model saved as knn.sav!")
 
 if __name__ == "__main__":
-    knn = KNN(k=3)
+    knn = KNN()
     knn.skl_knn() 
