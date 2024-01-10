@@ -8,9 +8,10 @@ import matplotlib.pyplot as plt
 from utils import load_model, get_pred
 
 if __name__ == "__main__": 
+    # cnn_model = load_model(model_name="mnist")
     cnn_model = load_model(model_name="svhn")
     
-    image_path = "./img/sudoku_label1/1/54.png"
+    # image_path = "./img/sudoku_label1/1/54.png"
     # image_path = "./img/sudoku_label2/2/2.png"
     # image_path = "./img/sudoku_label2/2/13.png"
     # image_path = "./img/sudoku_label2/2/32.png"
@@ -22,7 +23,7 @@ if __name__ == "__main__":
     # image_path = "./img/sudoku_label2/4/36.png"
     # image_path = "./img/sudoku_label2/4/66.png"
     # image_path = "./img/sudoku_label2/5/21.png"
-    # image_path = "./img/sudoku_label3/8/28.png"
+    image_path = "./img/sudoku_label3/8/28.png"
 
     img = Image.open(image_path).convert('L')
     img = PIL.ImageOps.invert(img)

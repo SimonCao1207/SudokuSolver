@@ -39,11 +39,11 @@ sol2 = [
 
 test_suits = [
     {   
-        "pathImage" : "./img/sudoku_img1.png",
+        "pathImage" : "./img/sample_img1.png",
         "sol" : sol1
     },
     {   
-        "pathImage" : "./img/sudoku_img2.png",
+        "pathImage" : "./img/sample_img2.png",
         "sol" : sol2
     },
 ]
