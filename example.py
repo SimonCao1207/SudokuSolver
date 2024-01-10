@@ -40,8 +40,7 @@ if __name__ == "__main__":
     
     transforms.ToPILImage()(input_image[0]).show()
     
-    with torch.no_grad():
-        output = cnn_model(input_image)
-        print(output)
-        predicted_class = get_pred(output)
+    output = cnn_model(input_image)
+    print(output)
+    predicted_class = get_pred(output)
     print(f"Predicted digit: {predicted_class}")

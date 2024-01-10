@@ -43,6 +43,7 @@ def reorder(myPoints):
     """
     Reorder points for warp perspective
     """
+    assert myPoints.size != 0
     myPoints = myPoints.reshape((4, 2))
     newPoints = np.zeros((4,1,2), dtype=np.int32)
     add = myPoints.sum(1)
@@ -80,13 +81,10 @@ def split_boxes(img):
             boxes.append(col)
     return boxes
 
-def resize(img):
-    img = cv2.bitwise_not(img)
-    resized = cv2.resize(img, (28, 28), interpolation=cv2.INTER_AREA)
-    return resized
-
 def preprocess_cnn(img, model_name="svhn"):
-    
+    """
+        Preprocess the PIL image before inputing to CNN model
+    """
     img = PIL.ImageOps.invert(img)
 
     transform=transforms.Compose([
@@ -104,9 +102,6 @@ def print_grid(grid):
     for r in grid:
         print(r)
         
-def get_image(path, num, box):
-    cv2.imwrite(os.path.join(path, f"{num}.png"), box)
-
 def crop(img, c):
     if (len(img.shape) > 2): 
         h, w, _ = img.shape
@@ -116,7 +111,7 @@ def crop(img, c):
         img_crop = img[c:h-c, c:w-c]
     return img_crop
 
-def whiten_edge(img, c):
+def _whiten_edge(img, c):
     if (len(img.shape) > 2):
         h, w, _ = img.shape
     else: h, w = img.shape
@@ -125,7 +120,7 @@ def whiten_edge(img, c):
     return img_white
 
 def isWhite(img, thres=40):
-    img_process = whiten_edge(img, 10)
+    img_process = _whiten_edge(img, 10)
     _, img_thres = cv2.threshold(img_process, 127, 255, cv2.THRESH_BINARY)
     img_invert = cv2.bitwise_not(img_thres)
     num_black_pix = np.count_nonzero(img_invert)
@@ -140,6 +135,10 @@ def edge_detector(img):
     return edges
 
 def load_model(model_name="svhn"):
+    """
+        Load the model from checkpoint
+        ::model_name : ["svhn", "mnist"] 
+    """
     CKP_PATH = "./checkpoints/svhn.pt" if model_name == "svhn" else "./checkpoints/mnist_cnn.pt"
     if model_name == "svhn":
         model = load_svhn_model(n_channel=32)
@@ -151,9 +150,9 @@ def load_model(model_name="svhn"):
             name = k[7:] # remove `module.`
             new_state_dict[name] = v
         model.load_state_dict(new_state_dict)
-        model.eval()
     elif model_name == "mnist":
         model = MNIST()
+    model.eval()
     return model
 
 def get_pred(prediction):
@@ -162,6 +161,6 @@ def get_pred(prediction):
     
 def predict(img_in, clf, model_name="svhn"):
     img_in = preprocess_cnn(img_in, model_name)
-    out = get_pred(clf(img_in))
-    
+    with torch.no_grad():
+        out = get_pred(clf(img_in))
     return out
