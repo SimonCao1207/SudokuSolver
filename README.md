@@ -17,6 +17,7 @@ Input image            |  Solved output
 
   - Run `main.py` to see the demo 
     ```sh
+    pip install -r requirement.txt
     python main.py
     ```
 
