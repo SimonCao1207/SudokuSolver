@@ -1,7 +1,8 @@
 from utils import *
 from sudokuSolver import *
 
-h, w = 450, 450
+H, W = 450, 450
+clf_type = 'cnn'
 
 label_1 = [
    0, 0, 6, 7, 0, 3, 2, 0, 0, 
@@ -50,7 +51,7 @@ label = label_1
 
 
 img = cv2.imread(pathImage)
-img = cv2.resize(img, (w, h))
+img = cv2.resize(img, (W, H))
 
 img_thres = thres(img)
 contours, hierarchy = cv2.findContours(img_thres, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -62,17 +63,7 @@ if biggest.size != 0:
     img_filter = ndimage.median_filter(img_warp, 3)
     img_gray = cv2.cvtColor(img_filter, cv2.COLOR_RGB2GRAY)
     boxes = split_boxes(img_gray) 
-    
-    # import os
-    # base = "./img/sudoku_label2"
-    # for i, box in enumerate(boxes):
-    #     path = os.path.join(base, str(label_2[i]))
-    #     print(f"Writing {i} :  {path}")
-    #     get_image(path, i, box)
-    # exit()
-
-    clf_type = 'knn'
-    clf = load_model(clf_type=clf_type)
+    clf = load_model()
     predictions = []
     for i, box in enumerate(tqdm(boxes)):
         # copy_box = copy.deepcopy(box)
@@ -80,7 +71,7 @@ if biggest.size != 0:
             predictions.append(0)
         else: 
             pred = predict(box, clf=clf, clf_type=clf_type)
-            predictions.append(pred)
+            predictions.append(pred.item())
             grid = []
     for i in range(0, 73, 9):
         grid.append(predictions[i:i+9])

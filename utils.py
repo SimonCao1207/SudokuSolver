@@ -5,6 +5,7 @@ from PIL import Image
 from scipy import ndimage
 import os
 from tqdm import tqdm
+import torch
 from cnn import *
 import pickle
 
@@ -88,20 +89,15 @@ def resize(img):
     return resized
 
 def preprocess_cnn(img):
-    img_crop = crop(img, 8)
-    if (len(img_crop.shape) > 2):
-        img_gray = cv2.cvtColor(img_crop, cv2.COLOR_BGR2GRAY)
-    else:
-        img_gray = img_crop
-    _, img_thres = cv2.threshold(img_gray, 127, 255, cv2.THRESH_BINARY)
-    # img_thres = zero_pad(img_thres, 5)
-    img_invert = cv2.bitwise_not(img_thres)
-    trans=transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Resize(28),
-        transforms.Normalize((0.1307,), (0.3081,))
+    
+    img = PIL.ImageOps.invert(img)
+
+    transform=transforms.Compose([
+            transforms.ToTensor(),
+            transforms.CenterCrop(40),
+            transforms.Resize(28, antialias=True),
     ])
-    return trans(img_invert)
+    return transform(img)
 
 def preprocees_knn(img):
     img_crop = crop(img, 4)
@@ -159,20 +155,10 @@ def predict(img_in, clf, clf_type='knn'):
     
     if clf_type == 'cnn':
         img_in = preprocess_cnn(img_in)
-        out = get_pred(clf(img_in.unsqueeze_(0)))[0]
+        out = get_pred(clf(img_in.unsqueeze(0)))
     
     elif clf_type == 'knn':
         img_in = preprocees_knn(img_in)
         out = int(clf.predict(img_in)[0])
     
     return out
-
-def load_model(clf_type='knn'):
-    if clf_type == 'cnn':
-        model = CNN()
-        device = torch.device('cpu')
-        model.load_state_dict(torch.load(CNN_PATH, map_location=device))
-        model.eval()
-    elif clf_type == 'knn':
-        model = pickle.load(open(KNN_PATH, 'rb'))
-    return model
