@@ -29,9 +29,9 @@ Input image            |  Solved output
 
 ### TODO: 
 
-- [] Improve digit classifier, currently is not working properly for certain images (maybe because of preprocessing phase)
+- [ ] Improve digit classifier, currently is not working properly for certain images (maybe because of preprocessing phase)
 
-- [] Front end ? 
+- [ ] Front end ? 
 
 
 
