@@ -1,8 +1,13 @@
 ## Sudoku Solver
 
-<img src="https://github.com/SimonCao1207/SudokuSolver/blob/master/img/sudoku_img1.png?raw=True" alt="drawing" width="300"/>
 
-<img src="https://github.com/SimonCao1207/SudokuSolver/blob/master/img/solved.png?raw=True" alt="drawing" width="300"/>
+Input image            |  Solved output
+:-------------------------:|:-------------------------:
+<img src="https://github.com/SimonCao1207/SudokuSolver/blob/master/img/sudoku_img1.png?raw=True" alt="drawing" width="300"/> |  <img src="https://github.com/SimonCao1207/SudokuSolver/blob/master/img/solved.png?raw=True" alt="drawing" width="300"/>
+
+
+
+
 
 
 ## Getting started
