@@ -26,7 +26,7 @@ if __name__ == "__main__":
                 predictions.append(0)
             else:
                 im_pil = Image.fromarray(box) # convert to pil image
-                pred = predict(im_pil, clf=clf, clf_type="cnn")
+                pred = predict(im_pil, clf=clf)
                 predictions.append(pred)
                 grid = []
         for i in range(0, 73, 9):

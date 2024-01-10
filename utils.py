@@ -9,7 +9,6 @@ from svhn.model import load_svhn_model
 from mnist.model import MNIST
 
 
-KNN_PATH = "./checkpoints/knn.sav"
 
 def display(img, name='board'): 
     cv2.imshow(name, img)
@@ -100,19 +99,6 @@ def preprocess_cnn(img):
     input_image = transform(img).unsqueeze(0)
     return torch.cat((input_image, input_image, input_image), 1)
 
-def preprocees_knn(img):
-    img_crop = crop(img, 4)
-    img_gray = cv2.cvtColor(img_crop, cv2.COLOR_RGB2GRAY) if (len(img_crop.shape) > 2) else img_crop
-    img_blur = cv2.GaussianBlur(img_gray, (11, 11), 0)
-    img_thres = cv2.adaptiveThreshold(img_blur, 255, cv2.ADAPTIVE_THRESH_MEAN_C | cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 5, 2)
-    # img_thres = zero_pad(img_thres, 5)
-    img_invert = cv2.bitwise_not(img_thres)
-    kernel = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], np.uint8)
-    img_process = cv2.dilate(img_invert, kernel)
-    img_process = cv2.resize(img_process, (28,28), interpolation=cv2.INTER_AREA)
-    img_in = img_process.reshape(1, -1)
-    return img_in
-
 def print_grid(grid):
     for r in grid:
         print(r)
@@ -173,11 +159,8 @@ def get_pred(prediction):
         _, pred_label = torch.max(prediction, 1)
         return pred_label.item()
     
-def predict(img_in, clf, clf_type='knn'):
-    if clf_type == 'cnn':
-        img_in = preprocess_cnn(img_in)
-        out = get_pred(clf(img_in))
-    elif clf_type == 'knn':
-        img_in = preprocees_knn(img_in)
-        out = int(clf.predict(img_in)[0])
+def predict(img_in, clf):
+    img_in = preprocess_cnn(img_in)
+    out = get_pred(clf(img_in))
+    
     return out
