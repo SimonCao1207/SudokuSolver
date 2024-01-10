@@ -1,23 +1,35 @@
 ## Sudoku Solver
 
-![sample](https://github.com/SimonCao1207/SudokuSolver/blob/master/img/sudoku_img3.png?raw=True)
+<!-- ![sample](https://github.com/SimonCao1207/SudokuSolver/blob/master/img/sudoku_img1.png?raw=True){width : 100%} -->
 
-Input a Sudoku board image. It solves it and gives the result. As simple as that !
+<img src="https://github.com/SimonCao1207/SudokuSolver/blob/master/
+img/sudoku_img1.png?raw=True" alt="drawing" width="300"/>
+
+<img src="https://github.com/SimonCao1207/SudokuSolver/blob/master/img/solved.png?raw=True" alt="drawing" width="300"/>
+
 
 ## Getting started
+  - Train a digit classification model from [SVHN](http://ufldl.stanford.edu/housenumbers/) and MNIST dataset to recognize number from user's input image. Checkpoints are saved in `./checkpoints`
 
-- `main.py` : main file with path to image.
-- `utils.py` : contains all helper functions
-- `knn.py` : Train a knn model
-- `train_cnn.ipynb` : Train a cnn model
-- `cnn.py` : CNN architecture
-- `run_test.py` : file to test features. 
+  - You can try train the model again in `./svhn`
+
+  - Run `main.py` to see the demo 
+    ```sh
+    python main.py
+    ```
+
+## Run test
+
+  ```sh
+  python test/test_utils.py
+  ```
+  - 
 
 ### TODO: 
 
-- [ ] Improve digit classifier, currently is not working properly for certain images (maybe because of preprocessing phase)
+- [] Improve digit classifier, currently is not working properly for certain images (maybe because of preprocessing phase)
 
-- [ ] Front end ? 
+- [] Front end ? 
 
 
 
