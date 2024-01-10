@@ -25,7 +25,7 @@ Input image            |  Solved output
   ```sh
   python test/test_utils.py
   ```
-  - 
+
 
 ### TODO: 
 
