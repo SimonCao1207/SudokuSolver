@@ -6,6 +6,7 @@ from PIL import Image
 if __name__ == "__main__":
     pathImage = "./img/sudoku_img1.png"
     H, W = 450, 450
+    print("Reading the image: ")
     img = cv2.imread(pathImage)
     img = cv2.resize(img, (W, H))
 
@@ -19,9 +20,9 @@ if __name__ == "__main__":
         img_filter = ndimage.median_filter(img_warp, 3)
         img_gray = cv2.cvtColor(img_filter, cv2.COLOR_RGB2GRAY)
         boxes = split_boxes(img_gray) 
-        clf = load_model()
+        clf = load_model("svhn")
         predictions = []
-        for i, box in enumerate(tqdm(boxes)):
+        for i, box in enumerate(boxes):
             if isWhite(box):
                 predictions.append(0)
             else:
@@ -31,8 +32,11 @@ if __name__ == "__main__":
                 grid = []
         for i in range(0, 73, 9):
             grid.append(predictions[i:i+9])
-
+    print(f"Sudoku board read from image: {pathImage}")
+    print_grid(grid)
+    print("-"*20)
     if solve_sudoku(grid):
+        print("Solved !")
         print_grid(grid)
     else: print("This puzzle is not solvable")
 

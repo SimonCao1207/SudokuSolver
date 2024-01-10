@@ -2,7 +2,6 @@ import torchvision.transforms as transforms
 import cv2
 import numpy as np
 import os
-from tqdm import tqdm
 import torch
 import PIL
 from svhn.model import load_svhn_model
