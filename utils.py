@@ -85,18 +85,20 @@ def resize(img):
     resized = cv2.resize(img, (28, 28), interpolation=cv2.INTER_AREA)
     return resized
 
-def preprocess_cnn(img):
+def preprocess_cnn(img, model_name="svhn"):
     
     img = PIL.ImageOps.invert(img)
 
     transform=transforms.Compose([
             transforms.ToTensor(),
+            transforms.Normalize(0.5, 0.5),
             transforms.CenterCrop(40),
             transforms.Resize(32, antialias=True),
     ])
 
     input_image = transform(img).unsqueeze(0)
-    return torch.cat((input_image, input_image, input_image), 1)
+    
+    return torch.cat((input_image, input_image, input_image), 1) if model_name == "svhn" else input_image
 
 def print_grid(grid):
     for r in grid:
@@ -158,8 +160,8 @@ def get_pred(prediction):
         _, pred_label = torch.max(prediction, 1)
         return pred_label.item()
     
-def predict(img_in, clf):
-    img_in = preprocess_cnn(img_in)
+def predict(img_in, clf, model_name="svhn"):
+    img_in = preprocess_cnn(img_in, model_name)
     out = get_pred(clf(img_in))
     
     return out
