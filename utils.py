@@ -1,13 +1,12 @@
 import torchvision.transforms as transforms
 import cv2
 import numpy as np
-from PIL import Image
-from scipy import ndimage
 import os
 from tqdm import tqdm
 import torch
-from cnn import *
-import pickle
+import PIL
+from svhn.model import load_svhn_model
+from mnist.model import MNIST
 
 
 KNN_PATH = "./checkpoints/knn.sav"
@@ -95,9 +94,11 @@ def preprocess_cnn(img):
     transform=transforms.Compose([
             transforms.ToTensor(),
             transforms.CenterCrop(40),
-            transforms.Resize(28, antialias=True),
+            transforms.Resize(32, antialias=True),
     ])
-    return transform(img)
+
+    input_image = transform(img).unsqueeze(0)
+    return torch.cat((input_image, input_image, input_image), 1)
 
 def preprocees_knn(img):
     img_crop = crop(img, 4)
@@ -150,15 +151,33 @@ def edge_detector(img):
     img_blur = cv2.GaussianBlur(img_gray, (3,3), 0) 
     edges = cv2.Canny(image=img_blur, threshold1=100, threshold2=200) 
     return edges
+
+def load_model(model_name="svhn"):
+    CKP_PATH = "./checkpoints/svhn.pt" if model_name == "svhn" else "./checkpoints/mnist_cnn.pt"
+    if model_name == "svhn":
+        model = load_svhn_model(n_channel=32)
+        device = torch.device('cpu')
+        state_dict = torch.load(CKP_PATH, map_location=device)
+        from collections import OrderedDict
+        new_state_dict = OrderedDict()
+        for k, v in state_dict.items():
+            name = k[7:] # remove `module.`
+            new_state_dict[name] = v
+        model.load_state_dict(new_state_dict)
+        model.eval()
+    elif model_name == "mnist":
+        model = MNIST()
+    return model
+
+def get_pred(prediction):
+        _, pred_label = torch.max(prediction, 1)
+        return pred_label.item()
     
 def predict(img_in, clf, clf_type='knn'):
-    
     if clf_type == 'cnn':
         img_in = preprocess_cnn(img_in)
-        out = get_pred(clf(img_in.unsqueeze(0)))
-    
+        out = get_pred(clf(img_in))
     elif clf_type == 'knn':
         img_in = preprocees_knn(img_in)
         out = int(clf.predict(img_in)[0])
-    
     return out
