@@ -5,7 +5,7 @@ from PIL import Image
 
 if __name__ == "__main__":
     # pathImage = "./img/sample_img1.png"
-    pathImage = "./img/sample_img4.png"
+    # pathImage = "./img/sample_img4.png"
     pathImage = "./img/sample_img5.png"
 
     H, W = 450, 450
